@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "serve": "babel-node scripts/serve"
+    "build": "yarn webpack --config webpack.config.js -d",
+    "serve": "yarn build ; babel-node scripts/serve"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -17,10 +18,13 @@
     "@babel/polyfill": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
     "leasot": "^11.1.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "@toruslabs/torus-direct-web-sdk": "^3.1.3",
