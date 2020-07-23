@@ -65,7 +65,13 @@ const App = ({isServerSide, config}) => {
             />
           ) : (
             <button
-              onClick={shouldTriggerLogin}
+              onClick={() => {
+                if (!!results) {
+                  // XXX: delegate to myapp
+                  return window.location.href = `myapp://path/into/app?authResult=${encodeURIComponent(JSON.stringify(results))}`;
+                }
+                return shouldTriggerLogin();
+              }}
               children="Sign In"
             />
           )}
