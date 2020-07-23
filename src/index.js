@@ -7,8 +7,10 @@ import {compile} from "handlebars";
 
 import App from "./app/App";
 
+const serviceWorkerPath = "/serviceworker";
+const torusPath = "/torus";
+
 const app = ({
-  baseUrl,
   enableLogging,
   proxyContractAddress,
   network,
@@ -18,6 +20,8 @@ const app = ({
   .resolve()
   .then(
     () => { 
+      const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
+      const baseUrl = `${path.substring(0, path.length - torusPath.length)}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
         enableLogging,
@@ -58,6 +62,6 @@ const app = ({
 
 export const torus = (...args) => express()
   .use(express.static("public"))
-  .get("/serviceworker/redirect.html", (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
-  .get("/serviceworker/sw.js", (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
-  .get("/torus", app(...args));
+  .get(`${serviceWorkerPath}/redirect.html`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
+  .get(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
+  .get(`${torusPath}`, app(...args));
