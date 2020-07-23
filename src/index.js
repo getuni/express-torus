@@ -21,6 +21,10 @@ const app = ({
   .resolve()
   .then(
     () => { 
+      const jwtParams = loginToConnectionMap[selectedVerifier] || {};
+      const verify = verifierMap[selectedVerifier];
+      //const {typeOfLogin, clientId, verifier} = verifierMap[selectedVerifier];
+      //const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
       const baseUrl = `${path.substring(0, path.length - `${torusPath}/${selectedVerifier}`.length)}${serviceWorkerPath}`;
       const config = Object.freeze({
@@ -28,9 +32,15 @@ const app = ({
         enableLogging,
         proxyContractAddress,
         network,
-        loginToConnectionMap,
-        verifierMap,
-        selectedVerifier,
+        verify,
+        jwtParams,
+        //verifierMap[selectedVerifier]
+        //loginToConnectionMap,
+        //verifierMap,
+        //selectedVerifier,
+        //loginToConnectionMap,
+        //verifierMap,
+        //selectedVerifier,
       });
       // TODO: pass children for custom render
       const container = renderToString(

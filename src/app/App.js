@@ -8,9 +8,8 @@ const App = ({config}) => {
     enableLogging,
     proxyContractAddress,
     network,
-    loginToConnectionMap,
-    verifierMap,
-    selectedVerifier,
+    jwtParams,
+    verify,
   } = config;
 
   const [sdk] = useState(
@@ -25,7 +24,8 @@ const App = ({config}) => {
   const [didInit, setDidInit] = useState(false);
 
   useEffect(
-    () => sdk.init()
+    () => sdk
+      .init()
       .then(() => setDidInit(true))
       .catch(console.error) && undefined,
     [sdk, setDidInit],
@@ -34,8 +34,8 @@ const App = ({config}) => {
   useEffect(
     () => {
       if (didInit) {
-        const jwtParams = loginToConnectionMap[selectedVerifier] || {};
-        const {typeOfLogin, clientId, verifier} = verifierMap[selectedVerifier];
+        const {typeOfLogin, clientId, verifier} = verify;
+        // TODO: How to propagate result?
         sdk.triggerLogin({
           typeOfLogin,
           verifier,
@@ -44,7 +44,7 @@ const App = ({config}) => {
         });
       }
     },
-    [selectedVerifier, didInit, sdk, loginToConnectionMap],
+    [didInit, sdk, verify, jwtParams],
   );
   return null;
 };
@@ -55,9 +55,8 @@ App.propTypes = {
     proxyContractAddress: PropTypes.string.isRequired,
     network: PropTypes.string.isRequired,
     enableLogging: PropTypes.bool,
-    loginToConnectionMap: PropTypes.shape({}).isRequired,
-    verifierMap: PropTypes.shape({}).isRequired,
-    selectedVerifier: PropTypes.string.isRequired,
+    verify: PropTypes.shape({}).isRequired,
+    jwtParams: PropTypes.shape({}),
   }).isRequired,
 };
 
