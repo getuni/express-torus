@@ -16,12 +16,13 @@ const app = ({
   network,
   verifierMap,
   loginToConnectionMap,
+  selectedVerifier,
 }) => (req, res, next) => Promise
   .resolve()
   .then(
     () => { 
       const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-      const baseUrl = `${path.substring(0, path.length - torusPath.length)}${serviceWorkerPath}`;
+      const baseUrl = `${path.substring(0, path.length - `${torusPath}/${selectedVerifier}`.length)}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
         enableLogging,
@@ -29,6 +30,7 @@ const app = ({
         network,
         loginToConnectionMap,
         verifierMap,
+        selectedVerifier,
       });
       // TODO: pass children for custom render
       const container = renderToString(
@@ -48,8 +50,8 @@ const app = ({
   </head>
   <body>
     <div id="container">{{{container}}}</div>
-    <script src=".${torusPath}/app.js" charset="utf-8"></script>
-    <script src=".${torusPath}/vendor.js" charset="utf-8"></script>
+    <script src="${torusPath}/app.js" charset="utf-8"></script>
+    <script src="${torusPath}/vendor.js" charset="utf-8"></script>
   </body>
 </html>
       `.trim();
@@ -60,9 +62,20 @@ const app = ({
   )
   .catch(next);
 
-export const torus = (...args) => express()
-  .get(`${serviceWorkerPath}/redirect.html`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
-  .get(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
-  .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
-  .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
-  .get(`${torusPath}`, app(...args));
+export const torus = (opts) => {
+  const {verifierMap} = opts;
+  return Object
+    .keys(verifierMap)
+    .reduce(
+      (middleware, selectedVerifier) => middleware
+        .get(`${torusPath}/${selectedVerifier}`, app({...opts, selectedVerifier})),
+      express()
+        .get(`${serviceWorkerPath}/redirect.html`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
+        .get(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
+        .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
+        .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js')),
+
+    );
+};
+
+

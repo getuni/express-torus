@@ -10,6 +10,7 @@ const App = ({config}) => {
     network,
     loginToConnectionMap,
     verifierMap,
+    selectedVerifier,
   } = config;
 
   const [sdk] = useState(
@@ -30,35 +31,22 @@ const App = ({config}) => {
     [sdk, setDidInit],
   );
 
-  const shouldTriggerLogin = useCallback(
-    selectedVerifier => Promise
-      .resolve()
-      .then(
-        () => {
-          if (!didInit) {
-            return Promise.reject(new Error("The sdk has not been initialized."));
-          }
-          return undefined;
-        }
-      )
-      .then(
-        () => {
-          const jwtParams = loginToConnectionMap[selectedVerifier] || {};
-          const { typeOfLogin, clientId, verifier } = verifierMap[selectedVerifier];
-          return sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams});
-        },
-      ),
-    [sdk, didInit, loginToConnectionMap],
+  useEffect(
+    () => {
+      if (didInit) {
+        const jwtParams = loginToConnectionMap[selectedVerifier] || {};
+        const {typeOfLogin, clientId, verifier} = verifierMap[selectedVerifier];
+        sdk.triggerLogin({
+          typeOfLogin,
+          verifier,
+          clientId,
+          jwtParams,
+        });
+      }
+    },
+    [selectedVerifier, didInit, sdk, loginToConnectionMap],
   );
-  return (
-    <div>
-      <button
-        onClick={() => shouldTriggerLogin("twitter")}
-      >
-        "hello from react file"
-      </button>
-    </div>
-  );
+  return null;
 };
 
 App.propTypes = {
@@ -69,6 +57,7 @@ App.propTypes = {
     enableLogging: PropTypes.bool,
     loginToConnectionMap: PropTypes.shape({}).isRequired,
     verifierMap: PropTypes.shape({}).isRequired,
+    selectedVerifier: PropTypes.string.isRequired,
   }).isRequired,
 };
 
