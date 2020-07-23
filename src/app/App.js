@@ -36,7 +36,6 @@ const App = ({isServerSide, config}) => {
     () => {
       if (didInit) {
         const {typeOfLogin, clientId, verifier} = verify;
-        // TODO: How to propagate result?
         return Promise
           .resolve()
           .then(
