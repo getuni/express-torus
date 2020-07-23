@@ -23,8 +23,6 @@ const app = ({
     () => { 
       const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const verify = verifierMap[selectedVerifier];
-      //const {typeOfLogin, clientId, verifier} = verifierMap[selectedVerifier];
-      //const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
       const baseUrl = `${path.substring(0, path.length - `${torusPath}/${selectedVerifier}`.length)}${serviceWorkerPath}`;
       const config = Object.freeze({
@@ -34,13 +32,6 @@ const app = ({
         network,
         verify,
         jwtParams,
-        //verifierMap[selectedVerifier]
-        //loginToConnectionMap,
-        //verifierMap,
-        //selectedVerifier,
-        //loginToConnectionMap,
-        //verifierMap,
-        //selectedVerifier,
       });
       // TODO: pass children for custom render
       const container = renderToString(
@@ -84,7 +75,6 @@ export const torus = (opts) => {
         .get(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
         .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
         .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js')),
-
     );
 };
 
