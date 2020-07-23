@@ -48,8 +48,8 @@ const app = ({
   </head>
   <body>
     <div id="container">{{{container}}}</div>
-    <script src="/app.js" charset="utf-8"></script>
-    <script src="/vendor.js" charset="utf-8"></script>
+    <script src=".${torusPath}/app.js" charset="utf-8"></script>
+    <script src=".${torusPath}/vendor.js" charset="utf-8"></script>
   </body>
 </html>
       `.trim();
@@ -61,7 +61,8 @@ const app = ({
   .catch(next);
 
 export const torus = (...args) => express()
-  .use(express.static("public"))
   .get(`${serviceWorkerPath}/redirect.html`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
   .get(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
+  .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
+  .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
   .get(`${torusPath}`, app(...args));
