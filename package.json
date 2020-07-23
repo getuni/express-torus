@@ -8,8 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "yarn ; yarn webpack --config webpack.config.js -d ; babel src --out-dir dist ; rm -rf node_modules ; ",
-    "release": "yarn build ; yarn release --access-public"
+    "build": "yarn ; yarn webpack --config webpack.config.js -d ; babel src --out-dir dist ; rm -rf node_modules ; "
   },
   "keywords": [
     "react",

@@ -10,6 +10,6 @@ const config = Object.freeze(window.__REACT_APP_CONFIG__);
 delete window.__REACT_APP_CONFIG__;
 
 hydrate(
-  <App config={config} />,
+  <App config={config} isServerSide={false} />,
   document.getElementById("container"),
 );

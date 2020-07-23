@@ -37,6 +37,7 @@ const app = ({
       const container = renderToString(
         <App
           config={config}
+          isServerSide
         />);
       const html = `
 <!DOCTYPE html>
@@ -71,8 +72,8 @@ export const torus = (opts) => {
       (middleware, selectedVerifier) => middleware
         .get(`${torusPath}/${selectedVerifier}`, app({...opts, selectedVerifier})),
       express()
-        .get(`${serviceWorkerPath}/redirect.html`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
-        .get(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
+        .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
+        .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
         .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
         .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js')),
     );
