@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useCallback} from "react";
 import PropTypes from "prop-types";
 import TorusSdk from "@toruslabs/torus-direct-web-sdk";
-import Cookies from 'universal-cookie';
 
 const App = ({isServerSide, config}) => {
   const {
@@ -15,6 +14,7 @@ const App = ({isServerSide, config}) => {
 
   const [error, setError] = useState(null);
   const [didInit, setDidInit] = useState(false);
+  const [results, setResults] = useState(null);
 
   const [sdk] = useState(
     new TorusSdk({
@@ -47,12 +47,12 @@ const App = ({isServerSide, config}) => {
               jwtParams,
             }),
           )
-          .then(results => new Cookies().set("torus", JSON.stringify(results), { path: "/" }))
+          .then(setResults)
           .catch(setError) && undefined;
       }
       return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
     },
-    [didInit, sdk, verify, jwtParams, setError],
+    [didInit, sdk, verify, jwtParams, setError, setResults],
   );
 
   return (
@@ -73,6 +73,11 @@ const App = ({isServerSide, config}) => {
       ) : (
         <span
           children={error.toString()}
+        />
+      )}
+      {(!!results) && (
+        <span
+          children={JSON.stringify(results)}
         />
       )}
     </div>
