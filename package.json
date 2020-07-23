@@ -8,8 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "yarn webpack --config webpack.config.js -d",
-    "serve": "yarn build ; babel-node scripts/serve"
+    "build": "yarn ; yarn webpack --config webpack.config.js -d ; babel src --out-dir dist ; rm -rf node_modules"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
