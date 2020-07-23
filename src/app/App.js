@@ -11,7 +11,9 @@ const App = ({isServerSide, config}) => {
     jwtParams,
     verify,
   } = config;
+
   const [error, setError] = useState(null);
+  const [didInit, setDidInit] = useState(false);
 
   const [sdk] = useState(
     new TorusSdk({
@@ -22,42 +24,57 @@ const App = ({isServerSide, config}) => {
     }),
   );
 
-  const [didInit, setDidInit] = useState(false);
-
   useEffect(
     () => sdk
       .init({skipSw: false})
       .then(() => setDidInit(true))
       .catch(setError) && undefined,
-    [sdk, setDidInit],
+    [sdk, setDidInit, isServerSide, setError],
   );
 
-  useEffect(
+  const shouldTriggerLogin = useCallback(
     () => {
       if (didInit) {
         const {typeOfLogin, clientId, verifier} = verify;
-
         // TODO: How to propagate result?
-        sdk.triggerLogin({
-          typeOfLogin,
-          verifier,
-          clientId,
-          jwtParams,
-        })
+        return Promise
+          .resolve()
+          .then(
+            () => sdk.triggerLogin({
+              typeOfLogin,
+              verifier,
+              clientId,
+              jwtParams,
+            }),
+          )
+        
           .then(console.log)
-          .catch(setError);
+          .catch(setError) && undefined;
       }
+      return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
     },
     [didInit, sdk, verify, jwtParams, setError],
   );
   return (
     <div>
-      <span>
-        {didInit ? "Initializing..." : "Initialized."}
-      </span>
-      <span>
-        {!!error && error.toString()}
-      </span>
+      {(!error) ? (
+        <>
+          {(!didInit) ? (
+            <span
+              children="Loading..."
+            />
+          ) : (
+            <button
+              onClick={() => shouldTriggerLogin()}
+              children="Open login."
+            />
+          )}
+        </>
+      ) : (
+        <span
+          children={error.toString()}
+        />
+      )}
     </div>
   );
 };
