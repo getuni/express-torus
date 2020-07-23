@@ -32,6 +32,18 @@ const App = ({isServerSide, config}) => {
     [sdk, setDidInit, isServerSide, setError],
   );
 
+  const shouldPostMessage = useCallback(
+    (e) => {
+      // https://github.com/react-native-community/react-native-webview/
+      if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+        return window.ReactNativeWebView.postMessage(e);
+      }
+      console.warn('not posting message', e);
+      return undefined;
+    },
+    [],
+  );
+
   const shouldTriggerLogin = useCallback(
     () => {
       if (didInit) {
@@ -46,13 +58,18 @@ const App = ({isServerSide, config}) => {
               jwtParams,
             }),
           )
-        
-          .then(console.log)
+          .then((userData) => {
+            // TODO: make configurable
+            if (!isServerSide) {
+              return shouldPostMessage(userData);
+            }
+            return undefined;
+          })
           .catch(setError) && undefined;
       }
       return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
     },
-    [didInit, sdk, verify, jwtParams, setError],
+    [didInit, sdk, verify, jwtParams, setError, shouldPostMessage],
   );
   return (
     <div>
