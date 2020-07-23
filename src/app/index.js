@@ -5,4 +5,11 @@ import {hydrate} from "react-dom";
 
 import App from "./App";
 
-hydrate(<App />, document.getElementById("container"));
+/* extern */
+const config = Object.freeze(window.__REACT_APP_CONFIG__);
+delete window.__REACT_APP_CONFIG__;
+
+hydrate(
+  <App config={config} />,
+  document.getElementById("container"),
+);
