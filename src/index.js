@@ -11,7 +11,12 @@ const app = () => (req, res, next) => Promise
   .resolve()
   .then(
     () => {
-      const config = Object.freeze({});
+      const config = Object.freeze({
+        baseUrl: "http://localhost:3000/serviceworker/",
+        enableLogging: true,
+        proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183", // details for test net
+        network: "ropsten", // details for test net
+      });
       // TODO: pass children for custom render
       const container = renderToString(
         <App

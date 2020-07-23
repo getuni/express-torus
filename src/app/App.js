@@ -76,14 +76,15 @@ const loginToConnectionMap = {
   [LINE]: { domain: AUTH_DOMAIN },
 };
 
-const App = () => {
+const App = ({config}) => {
+  const {baseUrl, enableLogging, proxyContractAddress, network} = config;
   // TODO: props
   const [sdk] = useState(
     new TorusSdk({
-      baseUrl: "http://localhost:3000/serviceworker/",
-      enableLogging: true,
-      proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183", // details for test net
-      network: "ropsten", // details for test net
+      baseUrl,
+      enableLogging,
+      proxyContractAddress,
+      network,
     }),
   );
   useEffect(
@@ -114,7 +115,14 @@ const App = () => {
   );
 };
 
-App.propTypes = {};
-App.defaultProps = {};
+App.propTypes = {
+  config: PropTypes.shape({
+
+  }).isRequired,
+};
+
+App.defaultProps = {
+  config: null,
+};
 
 export default App;
