@@ -9,8 +9,17 @@
   "private": false,
   "scripts": {
     "build": "yarn ; yarn webpack --config webpack.config.js -d ; babel src --out-dir dist ;",
-    "release": "yarn build ; rm -rf node_modules"
+    "release": "yarn build ; rm -rf node_modules ; yarn release --access-public"
   },
+  "keywords": [
+    "react",
+    "react-native",
+    "tor.us",
+    "key",
+    "management",
+    "express",
+    "middleware"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
