@@ -88,7 +88,7 @@ express()
       verifierMap,
       loginToConnectionMap,
       deepLinkUri,
-      root: appRootPath + '/dist',
     },
   ))
+  .use('/torus/root', express.static(`${appRootPath}/dist`))
   .listen(3000, () => null);

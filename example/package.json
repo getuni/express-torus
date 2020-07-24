@@ -9,7 +9,7 @@
     "aphrodite": "^2.4.0",
     "app-root-path": "^3.0.0",
     "express": "^4.17.1",
-    "express-torus": "../express-torus",
+    "express-torus": "../",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

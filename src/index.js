@@ -74,7 +74,7 @@ const app = ({
   .catch(next);
 
 export const torus = (opts) => {
-  const {verifierMap, root} = opts;
+  const {verifierMap} = opts;
   return Object
     .keys(verifierMap)
     .reduce(
@@ -84,8 +84,7 @@ export const torus = (opts) => {
         .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
         .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
         .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
-        .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
-        .use(`${torusPath}/root`, express.static(root)),
+        .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js')),
     );
 };
 
