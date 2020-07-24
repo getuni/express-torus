@@ -35,6 +35,10 @@ const dangerouslySetInnerHTML = {
   `.trim(),
 };
 
+/* define an app deep link to send results to */
+/* `myapp://path/into/app?torus=${encodeURIComponent(JSON.stringify(torusAuthResult))}` */
+const deepLinkUri = "myapp://path/into/app"; 
+
 express()
   .use(torus({
     verifierMap,
@@ -43,6 +47,7 @@ express()
     proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183",
     network: "ropsten",
     dangerouslySetInnerHTML,
+    deepLinkUri,
   })
   .listen(3000, console.log); // Creates a torus-connected login at localhost:3000/torus/google!
 ```

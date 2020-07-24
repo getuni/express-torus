@@ -18,6 +18,7 @@ const app = ({
   loginToConnectionMap,
   selectedVerifier,
   dangerouslySetInnerHTML,
+  deepLinkUri,
 }) => (req, res, next) => Promise
   .resolve()
   .then(
@@ -34,6 +35,7 @@ const app = ({
         verify,
         jwtParams,
         dangerouslySetInnerHTML,
+        deepLinkUri,
       });
       // TODO: pass children for custom render
       const container = renderToString(

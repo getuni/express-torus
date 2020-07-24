@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import PropTypes from "prop-types";
 import TorusSdk from "@toruslabs/torus-direct-web-sdk";
+import {typeCheck} from "type-check";
 
 const App = ({isServerSide, config}) => {
   const {
@@ -11,6 +12,7 @@ const App = ({isServerSide, config}) => {
     jwtParams,
     verify,
     dangerouslySetInnerHTML,
+    deepLinkUri,
   } = config;
 
   const [didInit, setDidInit] = useState(false);
@@ -42,7 +44,18 @@ const App = ({isServerSide, config}) => {
           .resolve()
           .then(() => setLoading(true))
           .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
-          .then(results => (window.location.href = `myapp://path/into/app?authResult=${encodeURIComponent(JSON.stringify(results))}`))
+          //.then(results => (window.location.href = `myapp://path/into/app?authResult=${encodeURIComponent(JSON.stringify(results))}`))
+          .then(
+            (results) => {
+              // XXX: Should we redirect to a deep link uri?
+              if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
+                const redirectUri = `${deepLinkUri}?torus=${encodeURIComponent(JSON.stringify(results))}`;
+                // redirect to app
+                return window.location.href = redirectUri;
+              }
+              return undefined;
+            },
+          )
           .catch(setError)
           .then(() => setLoading(false)) && undefined;
       }
@@ -82,6 +95,7 @@ App.propTypes = {
     dangerouslySetInnerHTML: PropTypes.shape({
       __html: PropTypes.string.isRequired,
     }).isRequired,
+    deepLinkUri: PropTypes.string,
   }).isRequired,
 };
 
