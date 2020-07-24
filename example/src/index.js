@@ -77,8 +77,6 @@ const loginToConnectionMap = {
   [LINE]: { domain: AUTH_DOMAIN },
 };
 
-const deepLinkUri = "myapp://path/into/app"; 
-
 express()
   .use(torus(
     {
@@ -87,7 +85,11 @@ express()
       network: "ropsten", // details for test net
       verifierMap,
       loginToConnectionMap,
-      deepLinkUri,
+      linking: {
+        android: "myapp://path/into/app",
+        ios: "myapp://path/into/app",
+        web: "http://localhost:19006",
+      },
     },
   ))
   .use('/torus/root', express.static(`${appRootPath}/dist`))

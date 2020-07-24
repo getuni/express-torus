@@ -28,10 +28,6 @@ const verifierMap = {
 
 const loginToConnectionMap = {};
 
-/* define an app deep link to send results to */
-/* `myapp://path/into/app?torus=${encodeURIComponent(JSON.stringify(torusAuthResult))}` */
-const deepLinkUri = "myapp://path/into/app"; 
-
 express()
   .use(torus({
     verifierMap,
@@ -39,9 +35,14 @@ express()
     enableLogging: true,
     proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183",
     network: "ropsten",
-    deepLinkUri,
+    // XXX: Deep links callbacks.
+    linking: {
+      android: "myapp://path/into/app",
+      ios: "myapp://path/into/app",
+      web: "http://localhost:19006",
+    },
   })
-  // XXX: Define custom frontend.
+  // XXX: Define custom frontend to serve login interface.
   .use("/torus/root", express.static("./public"))
   .listen(3000, console.log); // Creates a torus-connected login at localhost:3000/torus/google!
 ```

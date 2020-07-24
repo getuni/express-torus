@@ -17,17 +17,21 @@ const app = ({
   verifierMap,
   loginToConnectionMap,
   selectedVerifier,
-  deepLinkUri,
+  linking,
 }) => (req, res, next) => Promise
   .resolve()
   .then(
     () => {
+      const {query} = req;
+      const {platform} = query;
+      const {[platform]: deepLinkUri} = linking;
       const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const verify = verifierMap[selectedVerifier];
       const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-      const baseUrl = `${path.substring(0, path.length - `${torusPath}/${selectedVerifier}`.length)}${serviceWorkerPath}`;
+      //const baseUrl = `${path.substring(0, path.length - `${torusPath}/${selectedVerifier}`.length)}${serviceWorkerPath}`;
       const config = Object.freeze({
-        baseUrl,
+        // TODO: make dynamic
+        baseUrl: "http://localhost:3000/serviceworker",
         enableLogging,
         proxyContractAddress,
         network,
