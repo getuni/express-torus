@@ -54,7 +54,6 @@ const app = ({
     <style>
       body { margin:0; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>
