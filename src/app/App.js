@@ -12,9 +12,9 @@ const App = ({isServerSide, config}) => {
     verify,
   } = config;
 
-  const [error, setError] = useState(null);
   const [didInit, setDidInit] = useState(false);
-  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [sdk] = useState(
     new TorusSdk({
@@ -39,52 +39,30 @@ const App = ({isServerSide, config}) => {
         const {typeOfLogin, clientId, verifier} = verify;
         return Promise
           .resolve()
-          .then(
-            () => sdk.triggerLogin({
-              typeOfLogin,
-              verifier,
-              clientId,
-              jwtParams,
-            }),
-          )
-          .then(setResults)
-          .catch(setError) && undefined;
+          .then(() => setLoading(true))
+          .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
+          .then(results => (window.location.href = `myapp://path/into/app?authResult=${encodeURIComponent(JSON.stringify(results))}`))
+          .catch(setError)
+          .then(() => setLoading(false)) && undefined;
       }
       return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
     },
-    [didInit, sdk, verify, jwtParams, setError, setResults],
+    [didInit, sdk, verify, jwtParams, setError],
   );
 
   return (
     <div>
-      {(!error) ? (
-        <>
-          {(!didInit) ? (
-            <span
-              children="Loading..."
-            />
-          ) : (
-            <button
-              onClick={() => {
-                if (!!results) {
-                  // XXX: delegate to myapp
-                  return window.location.href = `myapp://path/into/app?authResult=${encodeURIComponent(JSON.stringify(results))}`;
-                }
-                return shouldTriggerLogin();
-              }}
-              children="Sign In"
-            />
-          )}
-        </>
+      {(!!error) ? (
+        <span children={error.toString()} />
       ) : (
-        <span
-          children={error.toString()}
-        />
-      )}
-      {(!!results) && (
-        <span
-          children={JSON.stringify(results)}
-        />
+        (!!loading) ? (
+          <span children="Loading..." />
+        ) : (
+          <button
+            onClick={shouldTriggerLogin}
+            children="Sign In"
+          />
+        )
       )}
     </div>
   );
