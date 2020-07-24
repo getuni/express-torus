@@ -17,10 +17,11 @@ const app = ({
   verifierMap,
   loginToConnectionMap,
   selectedVerifier,
+  dangerouslySetInnerHTML,
 }) => (req, res, next) => Promise
   .resolve()
   .then(
-    () => { 
+    () => {
       const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const verify = verifierMap[selectedVerifier];
       const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
@@ -32,6 +33,7 @@ const app = ({
         network,
         verify,
         jwtParams,
+        dangerouslySetInnerHTML,
       });
       // TODO: pass children for custom render
       const container = renderToString(
@@ -52,6 +54,7 @@ const app = ({
     <style>
       body { margin:0; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="container">{{{container}}}</div>

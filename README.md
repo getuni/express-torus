@@ -28,6 +28,13 @@ const verifierMap = {
 
 const loginToConnectionMap = {};
 
+/* define custom login page and use global hook to trigger auth prompt */
+const dangerouslySetInnerHTML = {
+  __html: `
+    <button onClick="window.__TORUS_TRIGGER_AUTH__()">Login</button>
+  `.trim(),
+};
+
 express()
   .use(torus({
     verifierMap,
@@ -35,6 +42,7 @@ express()
     enableLogging: true,
     proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183",
     network: "ropsten",
+    dangerouslySetInnerHTML,
   })
   .listen(3000, console.log); // Creates a torus-connected login at localhost:3000/torus/google!
 ```

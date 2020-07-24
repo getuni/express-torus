@@ -1,19 +1,8 @@
-
-
-
-
 const path = require("path");
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   //mode: process.env.NODE_ENV,
-  plugins: [
-    new CopyPlugin({
-      patterns: [
-        { from: './src/app/assets/lottie.json', to: 'app/assets/lottie.json' },
-      ],
-    }),
-  ],
+  plugins: [],
   entry: {
     vendor: ["@babel/polyfill", "react"],
     app: ["./src/app/index.js"]
@@ -35,12 +24,16 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
           {
             loader: 'file-loader',
           },
         ],
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
     ]
   },

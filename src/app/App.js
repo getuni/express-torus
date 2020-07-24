@@ -2,8 +2,6 @@ import React, {useState, useEffect, useCallback} from "react";
 import PropTypes from "prop-types";
 import TorusSdk from "@toruslabs/torus-direct-web-sdk";
 
-import {Splash, Gradient} from "./components";
-
 const App = ({isServerSide, config}) => {
   const {
     baseUrl,
@@ -12,6 +10,7 @@ const App = ({isServerSide, config}) => {
     network,
     jwtParams,
     verify,
+    dangerouslySetInnerHTML,
   } = config;
 
   const [didInit, setDidInit] = useState(false);
@@ -52,47 +51,25 @@ const App = ({isServerSide, config}) => {
     [didInit, sdk, verify, jwtParams, setError],
   );
 
-//{(!!error) ? (
-//        <span children={error.toString()} />
-//      ) : (
-//        (!!loading) ? (
-//          <span children="Loading..." />
-//        ) : (
-//          <button
-//            onClick={shouldTriggerLogin}
-//            children="Sign In"
-//          />
-//        )
-//      )}
-
+  /* make auth visible to injected html */
+  if (!isServerSide) {
+    window.__TORUS_TRIGGER_AUTH__ = shouldTriggerLogin;
+  }
+ 
   return (
     <div
       style={{
-        display: "flex",
         position: "absolute",
-        width: "100%",
-        height: "100%",
-        alignItems: "center",
-        justifyContent: "center",
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <Gradient
-          width="100%"
-          height="100%"
-        />
-      </div>
-      <Splash />
+      <div dangerouslySetInnerHTML={dangerouslySetInnerHTML} />
     </div>
   );
 };
-
 App.propTypes = {
   isServerSide: PropTypes.bool,
   config: PropTypes.shape({
@@ -102,6 +79,9 @@ App.propTypes = {
     enableLogging: PropTypes.bool,
     verify: PropTypes.shape({}).isRequired,
     jwtParams: PropTypes.shape({}),
+    dangerouslySetInnerHTML: PropTypes.shape({
+      __html: PropTypes.string.isRequired,
+    }).isRequired,
   }).isRequired,
 };
 
