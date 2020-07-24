@@ -49,6 +49,9 @@ const app = ({
       /* extern */
       window.__REACT_APP_CONFIG__ = ${JSON.stringify(config)};
     </script>
+    <style>
+      body { margin:0; }
+    </style>
   </head>
   <body>
     <div id="container">{{{container}}}</div>

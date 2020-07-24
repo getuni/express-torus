@@ -1,8 +1,19 @@
+
+
+
+
 const path = require("path");
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   //mode: process.env.NODE_ENV,
-  plugins: [],
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: './src/app/assets/lottie.json', to: 'app/assets/lottie.json' },
+      ],
+    }),
+  ],
   entry: {
     vendor: ["@babel/polyfill", "react"],
     app: ["./src/app/index.js"]

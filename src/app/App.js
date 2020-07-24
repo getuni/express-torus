@@ -2,6 +2,8 @@ import React, {useState, useEffect, useCallback} from "react";
 import PropTypes from "prop-types";
 import TorusSdk from "@toruslabs/torus-direct-web-sdk";
 
+import {Splash, Gradient} from "./components";
+
 const App = ({isServerSide, config}) => {
   const {
     baseUrl,
@@ -50,20 +52,43 @@ const App = ({isServerSide, config}) => {
     [didInit, sdk, verify, jwtParams, setError],
   );
 
+//{(!!error) ? (
+//        <span children={error.toString()} />
+//      ) : (
+//        (!!loading) ? (
+//          <span children="Loading..." />
+//        ) : (
+//          <button
+//            onClick={shouldTriggerLogin}
+//            children="Sign In"
+//          />
+//        )
+//      )}
+
   return (
-    <div>
-      {(!!error) ? (
-        <span children={error.toString()} />
-      ) : (
-        (!!loading) ? (
-          <span children="Loading..." />
-        ) : (
-          <button
-            onClick={shouldTriggerLogin}
-            children="Sign In"
-          />
-        )
-      )}
+    <div
+      style={{
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        <Gradient
+          width="100%"
+          height="100%"
+        />
+      </div>
+      <Splash
+      />
     </div>
   );
 };
