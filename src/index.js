@@ -17,7 +17,6 @@ const app = ({
   verifierMap,
   loginToConnectionMap,
   selectedVerifier,
-  dangerouslySetInnerHTML,
   deepLinkUri,
 }) => (req, res, next) => Promise
   .resolve()
@@ -34,7 +33,6 @@ const app = ({
         network,
         verify,
         jwtParams,
-        dangerouslySetInnerHTML,
         deepLinkUri,
       });
       // TODO: pass children for custom render
@@ -59,9 +57,12 @@ const app = ({
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap" rel="stylesheet">
   </head>
   <body>
+    <div id="root"></div>
     <div id="container">{{{container}}}</div>
     <script src="${torusPath}/app.js" charset="utf-8"></script>
     <script src="${torusPath}/vendor.js" charset="utf-8"></script>
+    <script src="${torusPath}/root/app.js" charset="utf-8"></script>
+    <script src="${torusPath}/root/vendor.js" charset="utf-8"></script>
   </body>
 </html>
       `.trim();
@@ -73,7 +74,7 @@ const app = ({
   .catch(next);
 
 export const torus = (opts) => {
-  const {verifierMap} = opts;
+  const {verifierMap, root} = opts;
   return Object
     .keys(verifierMap)
     .reduce(
@@ -83,7 +84,8 @@ export const torus = (opts) => {
         .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
         .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
         .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
-        .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js')),
+        .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
+        .use(`${torusPath}/root`, express.static(root)),
     );
 };
 

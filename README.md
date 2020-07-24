@@ -14,6 +14,7 @@ Then just add the middleware to your express app. In the example below, we use [
 ```javascript
 import express from "express";
 import {torus} from "express-torus";
+import appRootPath from "app-root-path";
 
 const GOOGLE = "google";
 
@@ -28,12 +29,8 @@ const verifierMap = {
 
 const loginToConnectionMap = {};
 
-/* define custom login page and use global hook to trigger auth prompt */
-const dangerouslySetInnerHTML = {
-  __html: `
-    <button onClick="window.__TORUS_TRIGGER_AUTH__()">Login</button>
-  `.trim(),
-};
+/* define the location of a static directory to serve as the frontend of the login */
+const root = `${appRootPath}/public`; // i.e. <path>/public/app.js, <path>/public/bundle.js, etc.
 
 /* define an app deep link to send results to */
 /* `myapp://path/into/app?torus=${encodeURIComponent(JSON.stringify(torusAuthResult))}` */
@@ -46,8 +43,8 @@ express()
     enableLogging: true,
     proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183",
     network: "ropsten",
-    dangerouslySetInnerHTML,
     deepLinkUri,
+    root,
   })
   .listen(3000, console.log); // Creates a torus-connected login at localhost:3000/torus/google!
 ```

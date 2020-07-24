@@ -11,7 +11,6 @@ const App = ({isServerSide, config}) => {
     network,
     jwtParams,
     verify,
-    dangerouslySetInnerHTML,
     deepLinkUri,
   } = config;
 
@@ -68,19 +67,7 @@ const App = ({isServerSide, config}) => {
     window.__TORUS_TRIGGER_AUTH__ = shouldTriggerLogin;
   }
  
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-      }}
-    >
-      <div dangerouslySetInnerHTML={dangerouslySetInnerHTML} />
-    </div>
-  );
+  return null;
 };
 App.propTypes = {
   isServerSide: PropTypes.bool,
@@ -91,9 +78,6 @@ App.propTypes = {
     enableLogging: PropTypes.bool,
     verify: PropTypes.shape({}).isRequired,
     jwtParams: PropTypes.shape({}),
-    dangerouslySetInnerHTML: PropTypes.shape({
-      __html: PropTypes.string.isRequired,
-    }).isRequired,
     deepLinkUri: PropTypes.string,
   }).isRequired,
 };
