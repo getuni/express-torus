@@ -44,7 +44,6 @@ const App = ({isServerSide, config}) => {
           .resolve()
           .then(() => setLoading(true))
           .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
-          //.then(results => (window.location.href = `myapp://path/into/app?authResult=${encodeURIComponent(JSON.stringify(results))}`))
           .then(
             (results) => {
               // XXX: Should we redirect to a deep link uri?
