@@ -68,6 +68,7 @@ const App = ({isServerSide, config}) => {
   return (
     <div
       style={{
+        display: "flex",
         position: "absolute",
         width: "100%",
         height: "100%",
@@ -87,8 +88,7 @@ const App = ({isServerSide, config}) => {
           height="100%"
         />
       </div>
-      <Splash
-      />
+      <Splash />
     </div>
   );
 };

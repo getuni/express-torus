@@ -29,8 +29,8 @@ Splash.propTypes = {
 };
 
 Splash.defaultProps = {
-  width: 400,
-  height: 400,
+  width: 600,
+  height: 600,
 };
 
 export default Splash;
