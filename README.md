@@ -42,8 +42,6 @@ express()
       web: "http://localhost:19006",
     },
   })
-  // XXX: Define custom frontend to serve login interface.
-  .use("/torus/root", express.static("./public"))
   .listen(3000, console.log); // Creates a torus-connected login at localhost:3000/torus/google!
 ```
 

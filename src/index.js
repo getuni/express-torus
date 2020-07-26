@@ -17,7 +17,6 @@ const app = ({
   network,
   verifierMap,
   loginToConnectionMap,
-  selectedVerifier,
   linking,
 }) => (req, res, next) => Promise
   .resolve()
@@ -26,16 +25,14 @@ const app = ({
       const {query} = req;
       const {platform, public: cert} = query;
       const {[platform]: deepLinkUri} = linking;
-      const jwtParams = loginToConnectionMap[selectedVerifier] || {};
-      const verify = verifierMap[selectedVerifier];
       const baseUrl = `${req.protocol}://${req.get("host")}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
         enableLogging,
         proxyContractAddress,
         network,
-        verify,
-        jwtParams,
+        loginToConnectionMap,
+        verifierMap,
         deepLinkUri,
         cert: atob(cert),
       });
@@ -59,12 +56,9 @@ const app = ({
     </style>
   </head>
   <body>
-    <div id="root"></div>
     <div id="container">{{{container}}}</div>
     <script src="${torusPath}/app.js" charset="utf-8"></script>
     <script src="${torusPath}/vendor.js" charset="utf-8"></script>
-    <script src="${torusPath}/root/app.js" charset="utf-8"></script>
-    <script src="${torusPath}/root/vendor.js" charset="utf-8"></script>
   </body>
 </html>
       `.trim();
@@ -77,17 +71,12 @@ const app = ({
 
 export const torus = (opts) => {
   const {verifierMap} = opts;
-  return Object
-    .keys(verifierMap)
-    .reduce(
-      (middleware, selectedVerifier) => middleware
-        .get(`${torusPath}/${selectedVerifier}`, app({...opts, selectedVerifier})),
-      express()
-        .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
-        .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
-        .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
-        .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js')),
-    );
+  return express()
+   .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
+   .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
+   .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
+   .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
+   .use(`${torusPath}`, app(opts));
 };
 
 

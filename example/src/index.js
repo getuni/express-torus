@@ -2,7 +2,6 @@ import express from "express";
 import {torus} from "express-torus";
 import appRootPath from "app-root-path";
 
-
 const GOOGLE = "google";
 const FACEBOOK = "facebook";
 const REDDIT = "reddit";
@@ -92,5 +91,4 @@ express()
       },
     },
   ))
-  .use('/torus/root', express.static(`${appRootPath}/dist`))
   .listen(3000, () => null);

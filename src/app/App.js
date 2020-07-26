@@ -3,6 +3,122 @@ import PropTypes from "prop-types";
 import TorusSdk from "@toruslabs/torus-direct-web-sdk";
 import {typeCheck} from "type-check";
 import jsrsasign from "jsrsasign";
+import {FacebookLoginButton, GoogleLoginButton, GithubLoginButton, LinkedInLoginButton, TwitterLoginButton, createButton} from "react-social-login-buttons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMagic, faKey, faMobile} from "@fortawesome/free-solid-svg-icons";
+import {faGoogle,faFacebook,faReddit,faDiscord,faTwitch, faGithub, faApple, faLinkedin, faTwitter, faWeibo, faLine, } from "@fortawesome/free-brands-svg-icons";
+import {StyleSheet, css} from "aphrodite";
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "yellow",
+  },
+});
+
+const RedditLoginButton = createButton(
+  {
+    text: "Login with Reddit",
+    icon: () => <FontAwesomeIcon icon={faReddit} />,
+    style: { background: "#F84300" },
+    activeStyle: { background: "#F84300" }
+  },
+);
+
+const DiscordLoginButton = createButton(
+  {
+    text: "Login with Discord",
+    icon: () => <FontAwesomeIcon icon={faDiscord} />,
+    style: { background: "#6F83D2" },
+    activeStyle: { background: "#6F83D2" }
+  },
+);
+
+const TwitchLoginButton = createButton(
+  {
+    text: "Login with Twitch",
+    icon: () => <FontAwesomeIcon icon={faTwitch} />,
+    style: { background: "#5D3DA5" },
+    activeStyle: { background: "#5D3DA5" },
+  },
+);
+
+const AppleLoginButton = createButton(
+  {
+    text: "Login with Apple",
+    icon: () => <FontAwesomeIcon icon={faApple} />,
+    style: { background: "#000000" },
+    activeStyle: { background: "#000000" }
+  },
+);
+
+const WeiboLoginButton = createButton(
+  {
+    text: "Login with Weibo",
+    icon: () => <FontAwesomeIcon icon={faWeibo} />,
+    style: { background: "#E0152C" },
+    activeStyle: { background: "#F89532" }
+  },
+);
+
+const LineLoginButton = createButton(
+  {
+    text: "Login with Line",
+    icon: () => <FontAwesomeIcon icon={faLine} />,
+    style: { background: "#00C000" },
+    activeStyle: { background: "#00C000" }
+  },
+);
+
+const EmailPasswordLoginButton = createButton(
+  {
+    text: "Login with Email and Password",
+    icon: () => <FontAwesomeIcon icon={faKey} />,
+    style: { background: "#3b5998" },
+    activeStyle: { background: "#293e69" }
+  },
+);
+
+const PasswordlessLoginButton = createButton(
+  {
+    text: "Passwordless Login",
+    icon: () => <FontAwesomeIcon icon={faMagic} />,
+    style: { background: "#3b5998" },
+    activeStyle: { background: "#293e69" }
+  },
+);
+
+const SMSPasswordlessLoginButton = createButton(
+  {
+    text: "Login with SMS",
+    icon: () => <FontAwesomeIcon icon={faMobile} />,
+    style: { background: "#3b5998" },
+    activeStyle: { background: "#293e69" }
+  },
+);
+
+const providers = {
+  google: ({...extras}) => <GoogleLoginButton {...extras}/>,
+  facebook: ({...extras}) => <FacebookLoginButton {...extras}/>,
+  reddit: ({...extras}) => <RedditLoginButton {...extras}/>,
+  discord: ({...extras}) => <DiscordLoginButton {...extras}/>,
+  twitch: ({...extras}) => <TwitchLoginButton {...extras}/>,
+  github: ({...extras}) => <GithubLoginButton {...extras}/>,
+  apple: ({...extras}) => <AppleLoginButton {...extras}/>,
+  linkedin: ({...extras}) => <LinkedInLoginButton {...extras}/>,
+  twitter: ({...extras}) => <TwitterLoginButton {...extras}/>,
+  weibo: ({...extras}) => <WeiboLoginButton {...extras}/>,
+  line: ({...extras}) => <LineLoginButton {...extras}/>,
+  email_password: ({...extras}) => <EmailPasswordLoginButton {...extras}/>,
+  passwordless: ({...extras}) => <PasswordlessLoginButton {...extras}/>,
+  // TODO: What configuration to use here? Sounds custom?
+  //["hosted_email_passwordless",],
+  hosted_sms_passwordless: ({...extras}) => <SMSPasswordlessLoginButton {...extras}/>,
+};
 
 const shouldEncryptSensitiveData = (data, key) => {
   const { privateKey, ...extras } = data;
@@ -17,9 +133,9 @@ const App = ({isServerSide, config}) => {
     baseUrl,
     enableLogging,
     proxyContractAddress,
+    loginToConnectionMap,
+    verifierMap,
     network,
-    jwtParams,
-    verify,
     deepLinkUri,
     cert,
   } = config;
@@ -46,7 +162,9 @@ const App = ({isServerSide, config}) => {
   );
 
   const shouldTriggerLogin = useCallback(
-    () => {
+    (selectedVerifier) => {
+      const verify = verifierMap[selectedVerifier];
+      const jwtParams = loginToConnectionMap[selectedVerifier];
       if (didInit) {
         const {typeOfLogin, clientId, verifier} = verify;
         return Promise
@@ -68,16 +186,28 @@ const App = ({isServerSide, config}) => {
       }
       return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
     },
-    [didInit, sdk, verify, jwtParams, setError],
+    [didInit, sdk, verifierMap, loginToConnectionMap, setError],
   );
 
-  /* make auth visible to injected html */
-  if (!isServerSide) {
-    window.__TORUS_TRIGGER_AUTH__ = shouldTriggerLogin;
-  }
- 
-  return null;
+  return (
+    <div
+      style={styles.container}
+    >
+      {Object.keys(verifierMap).map(
+        (k, i) => {
+          const {[k]: Component} = providers;
+          return (!!Component) && (
+            <Component
+              key={i}
+              onClick={() => shouldTriggerLogin(k)}
+            />
+          );
+        },
+      ).filter(e => !!e)}
+    </div>
+  );
 };
+
 App.propTypes = {
   isServerSide: PropTypes.bool,
   config: PropTypes.shape({
@@ -85,8 +215,8 @@ App.propTypes = {
     proxyContractAddress: PropTypes.string.isRequired,
     network: PropTypes.string.isRequired,
     enableLogging: PropTypes.bool,
-    verify: PropTypes.shape({}).isRequired,
-    jwtParams: PropTypes.shape({}),
+    loginToConnectionMap: PropTypes.shape({}).isRequired,
+    verifierMap: PropTypes.shape({}).isRequired,
     deepLinkUri: PropTypes.string,
     cert: PropTypes.string.isRequired,
   }).isRequired,
