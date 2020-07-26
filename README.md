@@ -1,6 +1,8 @@
 # express-torus
 A simple drop-in middleware for [`express`](https://github.com/expressjs/express) which enables decentralized key management using [Tor.us](https://tor.us/), a service that provides decentralized key management across a huge variety of authentication providers such as [**Twitter**](https://twitter.com/home), [**Facebook**](https://www.facebook.com/), [**Twitch**](http://twitch.com/) and countless others, powered by the [**Ethereum**](https://ethereum.org/en/) blockchain.
 
+To see how this works on the client, check out [`express-torus-react-native`](https://github.com/cawfree/express-torus-react-native).
+
 ## 🚀 Getting Started
 
 To install [`express-torus`](https://github.com/cawfree/express-torus), add the following dependencies:
