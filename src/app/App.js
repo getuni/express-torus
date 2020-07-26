@@ -58,7 +58,7 @@ const App = ({isServerSide, config}) => {
             (encryptedData) => {
               // XXX: Should we redirect to a deep link uri?
               if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
-                return `${deepLinkUri}?torus=${encodeURIComponent(JSON.stringify(encryptedData))}`;
+                return window.location.href = `${deepLinkUri}?torus=${encodeURIComponent(JSON.stringify(encryptedData))}`;
               }
               return undefined;
             },
