@@ -4,6 +4,7 @@ import {OK} from "http-status-codes";
 import appRootPath from "app-root-path";
 import {renderToString} from "react-dom/server";
 import {compile} from "handlebars";
+import {decode as atob} from "base-64";
 
 import App from "./app/App";
 
@@ -23,7 +24,7 @@ const app = ({
   .then(
     () => {
       const {query} = req;
-      const {platform} = query;
+      const {platform, public: cert} = query;
       const {[platform]: deepLinkUri} = linking;
       const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const verify = verifierMap[selectedVerifier];
@@ -38,6 +39,7 @@ const app = ({
         verify,
         jwtParams,
         deepLinkUri,
+        cert: atob(cert),
       });
       // TODO: pass children for custom render
       const container = renderToString(
