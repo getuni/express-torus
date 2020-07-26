@@ -28,11 +28,9 @@ const app = ({
       const {[platform]: deepLinkUri} = linking;
       const jwtParams = loginToConnectionMap[selectedVerifier] || {};
       const verify = verifierMap[selectedVerifier];
-      const path = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
-      //const baseUrl = `${path.substring(0, path.length - `${torusPath}/${selectedVerifier}`.length)}${serviceWorkerPath}`;
+      const baseUrl = `${req.protocol}://${req.get("host")}${serviceWorkerPath}`;
       const config = Object.freeze({
-        // TODO: make dynamic
-        baseUrl: "http://localhost:3000/serviceworker",
+        baseUrl,
         enableLogging,
         proxyContractAddress,
         network,
@@ -41,7 +39,6 @@ const app = ({
         deepLinkUri,
         cert: atob(cert),
       });
-      // TODO: pass children for custom render
       const container = renderToString(
         <App
           config={config}
