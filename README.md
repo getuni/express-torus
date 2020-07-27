@@ -3,6 +3,8 @@ A simple drop-in middleware for [`express`](https://github.com/expressjs/express
 
 To see how this works on the client, check out [`express-torus-react-native`](https://github.com/cawfree/express-torus-react-native).
 
+This project was created as part of the [**Gitcoin**](https://gitcoin.co/) [**KERNEL Genesis Block**](https://gitcoin.co/blog/announcing-kernel/).
+
 ## 🚀 Getting Started
 
 To install [`express-torus`](https://github.com/cawfree/express-torus), add the following dependencies:
