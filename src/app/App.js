@@ -7,17 +7,27 @@ import {FacebookLoginButton, GoogleLoginButton, GithubLoginButton, LinkedInLogin
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagic, faKey, faMobile} from "@fortawesome/free-solid-svg-icons";
 import {faGoogle,faFacebook,faReddit,faDiscord,faTwitch, faGithub, faApple, faLinkedin, faTwitter, faWeibo, faLine, } from "@fortawesome/free-brands-svg-icons";
-import {StyleSheet, css} from "aphrodite";
 
-const styles = StyleSheet.create({
+import {Loading} from "./components";
+
+const styles = Object.freeze({
   container: {
     position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: "yellow",
   },
+  loadingContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }
 });
 
 const RedditLoginButton = createButton(
@@ -140,6 +150,7 @@ const App = ({isServerSide, config}) => {
     cert,
   } = config;
 
+  const [success, setSuccess] = useState(false);
   const [didInit, setDidInit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -176,7 +187,9 @@ const App = ({isServerSide, config}) => {
             (encryptedData) => {
               // XXX: Should we redirect to a deep link uri?
               if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
-                return window.location.href = `${deepLinkUri}?torus=${encodeURIComponent(JSON.stringify(encryptedData))}`;
+                return Promise.resolve()
+                  .then(() => setSuccess(true))
+                  .then(() => window.location.href = `${deepLinkUri}?torus=${encodeURIComponent(JSON.stringify(encryptedData))}`);
               }
               return undefined;
             },
@@ -186,24 +199,30 @@ const App = ({isServerSide, config}) => {
       }
       return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
     },
-    [didInit, sdk, verifierMap, loginToConnectionMap, setError],
+    [didInit, sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
   );
 
   return (
-    <div
-      style={styles.container}
-    >
-      {Object.keys(verifierMap).map(
-        (k, i) => {
-          const {[k]: Component} = providers;
-          return (!!Component) && (
-            <Component
-              key={i}
-              onClick={() => shouldTriggerLogin(k)}
-            />
-          );
-        },
-      ).filter(e => !!e)}
+    <div style={styles.container}>
+      {(!!loading || !!success) ? (
+        <div style={styles.loadingContainer}>
+          <Loading />
+        </div>
+      ) : (
+        <>
+          {Object.keys(verifierMap).map(
+            (k, i) => {
+              const {[k]: Component} = providers;
+              return (!!Component) && (
+                <Component
+                  key={i}
+                  onClick={() => shouldTriggerLogin(k)}
+                />
+              );
+            },
+          ).filter(e => !!e)}
+        </>
+      )}
     </div>
   );
 };
