@@ -39,12 +39,6 @@ express()
     enableLogging: true,
     proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183",
     network: "ropsten",
-    // XXX: Deep links callbacks.
-    linking: {
-      android: "myapp://path/into/app",
-      ios: "myapp://path/into/app",
-      web: "http://localhost:19006",
-    },
   })
   .listen(3000, console.log); // Creates a torus-connected login at localhost:3000/torus/google!
 ```

@@ -17,14 +17,12 @@ const app = ({
   network,
   verifierMap,
   loginToConnectionMap,
-  linking,
 }) => (req, res, next) => Promise
   .resolve()
   .then(
     () => {
       const {query} = req;
-      const {platform, public: cert} = query;
-      const {[platform]: deepLinkUri} = linking;
+      const {deepLinkUri, public: cert} = query;
       const baseUrl = `${req.protocol}://${req.get("host")}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
@@ -33,7 +31,7 @@ const app = ({
         network,
         loginToConnectionMap,
         verifierMap,
-        deepLinkUri,
+        deepLinkUri: atob(deepLinkUri),
         cert: atob(cert),
       });
       const container = renderToString(

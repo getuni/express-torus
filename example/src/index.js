@@ -84,11 +84,6 @@ express()
       network: "ropsten", // details for test net
       verifierMap,
       loginToConnectionMap,
-      linking: {
-        android: "myapp://path/into/app",
-        ios: "myapp://path/into/app",
-        web: "http://localhost:19006",
-      },
     },
   ))
   .listen(3000, () => null);
