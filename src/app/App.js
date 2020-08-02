@@ -187,9 +187,11 @@ const App = ({isServerSide, config}) => {
             (encryptedData) => {
               // XXX: Should we redirect to a deep link uri?
               if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
+                // TODO: use a more robust method for url query parameters
+                const q = deepLinkUri.contains("?") ? "&" : "?";
                 return Promise.resolve()
                   .then(() => setSuccess(true))
-                  .then(() => window.location.href = `${deepLinkUri}?torus=${encodeURIComponent(JSON.stringify(encryptedData))}`);
+                  .then(() => window.location.href = `${deepLinkUri}${q}torus=${encodeURIComponent(JSON.stringify(encryptedData))}`);
               }
               return undefined;
             },
