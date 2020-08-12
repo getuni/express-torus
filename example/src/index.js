@@ -1,6 +1,7 @@
 import express from "express";
 import {torus} from "express-torus";
 import appRootPath from "app-root-path";
+import {OK} from "http-status-codes";
 
 const GOOGLE = "google";
 const FACEBOOK = "facebook";
@@ -77,6 +78,8 @@ const loginToConnectionMap = {
 };
 
 express()
+  .get(`/torus/root/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/app.js'))
+  .get(`/torus/root/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/vendor.js'))
   .use(torus(
     {
       enableLogging: true,

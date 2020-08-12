@@ -5,13 +5,13 @@ import appRootPath from "app-root-path";
 import {renderToString} from "react-dom/server";
 import {compile} from "handlebars";
 import {decode as atob} from "base-64";
+import deepmerge from "deepmerge";
 
 import App from "./app/App";
 
-const serviceWorkerPath = "/serviceworker";
-const torusPath = "/torus";
-
 const app = ({
+  serviceWorkerPath,
+  torusPath,
   enableLogging,
   proxyContractAddress,
   network,
@@ -55,8 +55,11 @@ const app = ({
   </head>
   <body>
     <div id="container">{{{container}}}</div>
+    <div id="root"></div>
     <script src="${torusPath}/app.js" charset="utf-8"></script>
     <script src="${torusPath}/vendor.js" charset="utf-8"></script>
+    <script src="${torusPath}/root/app.js" charset="utf-8"></script>
+    <script src="${torusPath}/root/vendor.js" charset="utf-8"></script>
   </body>
 </html>
       `.trim();
@@ -67,8 +70,14 @@ const app = ({
   )
   .catch(next);
 
-export const torus = (opts) => {
-  const {verifierMap} = opts;
+const defaultOptions = {
+  torusPath: "/torus",
+  serviceWorkerPath: "/serviceWorker",
+};
+
+export const torus = (options = defaultOptions) => {
+  const opts = deepmerge(defaultOptions, options);
+  const {verifierMap, torusPath, serviceWorkerPath} = opts;
   return express()
    .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
    .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
