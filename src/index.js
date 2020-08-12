@@ -38,6 +38,7 @@ const app = ({
         <App
           config={config}
           isServerSide
+          postMessageStream={null}
         />);
       const html = `
 <!DOCTYPE html>

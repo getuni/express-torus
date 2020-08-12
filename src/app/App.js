@@ -12,7 +12,7 @@ const shouldEncryptSensitiveData = (data, key) => {
   };
 };
 
-const App = ({isServerSide, config}) => {
+const App = ({postMessageStream, isServerSide, config}) => {
   const {
     baseUrl,
     enableLogging,
@@ -77,10 +77,30 @@ const App = ({isServerSide, config}) => {
     },
     [didInit, sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
   );
+  
+  useEffect(
+    () => {
+      if (!isServerSide) {
+        postMessageStream.on(
+          "data",
+          ({type, ...extras}) => {
+            if (type === "login") {
+              const{provider} = extras;
+              return shouldTriggerLogin(provider);
+            }
+            return console.warn(`Encountered unexpected type, "${type}". This will be ignored.`);
+          },
+        ) && undefined
+      }
+    },
+    [isServerSide, postMessageStream, shouldTriggerLogin],
+  );
+
   return null;
 };
 
 App.propTypes = {
+  postMessageStream: PropTypes.shape({}).isRequired,
   isServerSide: PropTypes.bool,
   config: PropTypes.shape({
     baseUrl: PropTypes.string.isRequired,
