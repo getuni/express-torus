@@ -100,7 +100,7 @@ const App = ({postMessageStream, isServerSide, config}) => {
 };
 
 App.propTypes = {
-  postMessageStream: PropTypes.shape({}).isRequired,
+  postMessageStream: PropTypes.shape({}),
   isServerSide: PropTypes.bool,
   config: PropTypes.shape({
     baseUrl: PropTypes.string.isRequired,
@@ -115,6 +115,7 @@ App.propTypes = {
 };
 
 App.defaultProps = {
+  postMessageStream: undefined,
   isServerSide: false,
   config: null,
 };

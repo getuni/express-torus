@@ -4,10 +4,16 @@ import PostMessageStream from "post-message-stream";
 
 const App = ({postMessageStream}) => {
   return (
-    <button
-      onClick={() => postMessageStream.write({ type:"login", provider: "twitter" })}
-      children="Login with Twitter"
-    />
+    <>
+      <button
+        onClick={() => postMessageStream.write({ type:"login", provider: "google" })}
+        children="Login with Google"
+      />
+      <button
+        onClick={() => postMessageStream.write({ type:"login", provider: "twitter" })}
+        children="Login with Twitter"
+      />
+    </>
   );
 };
 

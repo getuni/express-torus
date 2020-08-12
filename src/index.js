@@ -73,7 +73,7 @@ const app = ({
 
 const defaultOptions = {
   torusPath: "/torus",
-  serviceWorkerPath: "/serviceWorker",
+  serviceWorkerPath: "/serviceworker",
 };
 
 export const torus = (options = defaultOptions) => {
