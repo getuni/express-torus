@@ -23,7 +23,7 @@ const app = ({
     () => {
       const {query} = req;
       const {deepLinkUri, public: cert} = query;
-      const baseUrl = `${req.protocol}://${req.get("host")}${serviceWorkerPath}`;
+      const baseUrl = `http${req.secure ? "s" : ""}://${req.get("host")}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
         enableLogging,
