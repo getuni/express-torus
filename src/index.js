@@ -10,6 +10,7 @@ import deepmerge from "deepmerge";
 import App from "./app/App";
 
 const app = ({
+  scheme,
   serviceWorkerPath,
   torusPath,
   enableLogging,
@@ -23,7 +24,7 @@ const app = ({
     () => {
       const {query} = req;
       const {deepLinkUri, public: cert} = query;
-      const baseUrl = `http${req.secure ? "s" : ""}://${req.get("host")}${serviceWorkerPath}`;
+      const baseUrl = `${scheme}://${req.get("host")}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
         enableLogging,
@@ -74,6 +75,7 @@ const app = ({
 const defaultOptions = {
   torusPath: "/torus",
   serviceWorkerPath: "/serviceworker",
+  scheme: "http",
 };
 
 export const torus = (options = defaultOptions) => {
