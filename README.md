@@ -11,11 +11,7 @@ To install [`express-torus`](https://github.com/cawfree/express-torus), add the 
 
 ```bash
 yarn add @toruslabs/torus-direct-web-sdk prop-types react-dom react express-torus type-check
-```
-
-Then just add the middleware to your express app. In the example below, we use [**Google**](https://google.com) as an authentication provider:
-
-```javascript
+``` Then just add the middleware to your express app. In the example below, we use [**Google**](https://google.com) as an authentication provider: ```javascript
 import express from "express";
 import {torus} from "express-torus";
 
@@ -55,8 +51,9 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
     - You can view the identifiers of each application at `https://manage.auth0.com/dashboard/us/${YOUR_AUTH0_DOMAIN}/applications`.
     - Tor.us will provide you with a verifier URL.
     - You are not required to use a Auth0 Custom Domain for this solution to work. (Normally, this is just done to have a _pretty_ URL.)
+  - Define your Auth0 `AUTH_DOMAIN` (i.e. `https://${YOUR_AUTH0_DOMAIN}.auth0.com`) in the `loginToConnectionMap`.
   - Finally, you'll need to register your authentication callback URLs.
-    - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter).
+    - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter). (Make sure you [**set up the connection**](https://auth0.com/docs/connections/social/twitter)!)
 
 ## ✌️ License
 [**MIT**](./LICENSE)
