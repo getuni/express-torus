@@ -77,6 +77,15 @@ const App = ({postMessageStream, isServerSide, config}) => {
     },
     [didInit, sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
   );
+
+  useEffect(
+    () => {
+      if (!!error) {
+        console.error(error);
+      }
+    },
+    [error],
+  );
   
   useEffect(
     () => {
