@@ -50,11 +50,12 @@ For more information on defining authentication providers, please check out [**t
 The [**Tor.us**](https://tor.us) example above shows how we can use a pre-configured verifier defined by the tor.us team, for us with experimenting with example applications that run on your [**localhost:3000***](http://localhost:3000); however to use on a custom domain, you perform the following additional steps:
 
   - Register an account with [**Auth0**](https://auth0.com/)
-  - Provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json` along with your **Auth0 Global Client Identifier**, which you can find in your applications.
+  - Provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json` along with your **Auth0 Application Identifier** (**not** your Global Identiier), which you can find in your applications.
     - You can get in touch with the talented team of tor.us developers via their [**Telegram**](https://t.me/TorusLabs).
     - You can view the identifiers of each application at `https://manage.auth0.com/dashboard/us/${YOUR_AUTH0_DOMAIN}/applications`.
     - Tor.us will provide you with a verifier URL.
-  - Finally, you'll need to register your authentication callback.
+    - You are not required to use a Auth0 Custom Domain for this solution to work. (Normally, this is just done to have a _pretty_ URL.)
+  - Finally, you'll need to register your authentication callback URLs.
     - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter).
 
 ## ✌️ License
