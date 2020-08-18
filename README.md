@@ -56,7 +56,7 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
     - Tor.us will provide you with a verifier URL.
     - You are not required to use a Auth0 Custom Domain for this solution to work. (Normally, this is just done to have a _pretty_ URL.)
   - Finally, you'll need to register your authentication callback URLs.
-    - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter).
+    - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter). (Make sure you [**set up the connection**](https://auth0.com/docs/connections/social/twitter)!)
 
 ## ✌️ License
 [**MIT**](./LICENSE)
