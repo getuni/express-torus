@@ -53,6 +53,7 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
   - Provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json` along with your **Auth0 Global Client Identifier**, which you can find in your applications.
     - You can get in touch with the talented team of tor.us developers via their [**Telegram**](https://t.me/TorusLabs).
     - You can view the identifiers of each application at `https://manage.auth0.com/dashboard/us/${YOUR_AUTH0_DOMAIN}/applications`.
+    - Tor.us will provide you with a verifier URL.
   - Finally, you'll need to register your authentication callback.
     - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter).
 
