@@ -48,7 +48,7 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
   - Register an account with [**Auth0**](https://auth0.com/)
   - Provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json`, alongside with your **Auth0 Application Identifier** (and _not_ your Global Identifier).
     - You can get in touch with the talented team of tor.us developers via their [**Telegram**](https://t.me/TorusLabs).
-    - **Note:** Your domain might reset under a specific region, i.e. `https://${YOUR_AUTH_DOMAIN}.us.auth0.com`.
+      - Your domain might reset under a specific region, i.e. `https://${YOUR_AUTH_DOMAIN}.us.auth0.com`.
     - You can view the identifiers of each application at . You'll need to provide this to your `verifierMap`.
     - Tor.us will provide you with an application-specific verifier URL, which you must pass to your `verifierMap`. In addition, you need to provide the `clientId` which is the **Application Identifer** that you provided to tor.us.
     - You are **not** required to use a Auth0 Custom Domain for this solution to work. (Normally, this is just done to have a _pretty_ URL.)
