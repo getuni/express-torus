@@ -39,22 +39,15 @@ const App = ({postMessageStream, isServerSide, config}) => {
 
   useEffect(
     () => (async () => {
-      console.log('did call use effect');
 
       if (isServerSide) return;
 
-      console.log('not server side');
-
-      try {
-        console.warn("about to init...");
-        const result = await sdk.init({skipSw: false});
-        console.log("did init successfully");
-      }
+      try { const result = await sdk.init({skipSw: false}); }
       catch (e) {
-        console.warn("did error on init");
         console.error(e);
         setError(e);
       }
+
     })() && undefined,
     [sdk, isServerSide, setError],
   );
@@ -83,7 +76,6 @@ const App = ({postMessageStream, isServerSide, config}) => {
           },
         )
         .catch((e) => {
-          console.warn('got an error with sdk');
           console.error(e);
           setError(e);
         })
