@@ -25,9 +25,8 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
       - i.e. `const verifierMap = { twitter: { domain: "${YOUR_AUTH0_DOMAIN}"} }`.
       - Remember, be careful to check whether you should be defining a specific region for your domain!
   - Next, in your `loginToConnectionMap` you'll need to assign verifiers to your custom `domain` on Auth0.
-    
   - Under your Tor.us **Application Settings**, you must register the URL of your `express` app as one of the allowed callback URLs.
-   - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`, or wherever you have defined your custom `/serviceworker`.
+    - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`, or wherever you have defined your custom `/serviceworker`.
   - Finally, you'll need to register your authentication callback URLs.
     - This takes the form `https://${YOUR_AUTH0_DOMAIN}.auth0.com/login/callback`.
       - If you're using a region-specific callback, i.e. `us`, this would be `https://${YOUR_AUTH0_DOMAIN}.us.auth0.com/login/callback`.
