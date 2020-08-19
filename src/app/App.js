@@ -39,10 +39,25 @@ const App = ({postMessageStream, isServerSide, config}) => {
   );
 
   useEffect(
-    () => sdk
-      .init({skipSw: false})
-      .then(() => setDidInit(true))
-      .catch(setError) && undefined,
+    () => (async () => {
+      console.log('did call use effect');
+
+      if (isServerSide) return;
+
+      console.log('not server side');
+
+      try {
+        console.warn("about to init...");
+        const result = await sdk.init({skipSw: false});
+        setDidInit(true);
+        console.log("did init successfully");
+      }
+      catch (e) {
+        console.warn("did error on init");
+        console.error(e);
+        setError(e);
+      }
+    })() && undefined,
     [sdk, setDidInit, isServerSide, setError],
   );
 
@@ -78,15 +93,6 @@ const App = ({postMessageStream, isServerSide, config}) => {
     [didInit, sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
   );
 
-  useEffect(
-    () => {
-      if (!!error) {
-        console.error(error);
-      }
-    },
-    [error],
-  );
-  
   useEffect(
     () => {
       if (!isServerSide) {
