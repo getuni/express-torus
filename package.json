@@ -50,6 +50,7 @@
     "handlebars": "^4.7.6",
     "http-status-codes": "^1.4.0",
     "jsrsasign": "^8.0.20",
-    "post-message-stream": "^3.0.0"
+    "post-message-stream": "^3.0.0",
+    "type-check": "^0.4.0"
   }
 }

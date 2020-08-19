@@ -6,8 +6,11 @@ import {renderToString} from "react-dom/server";
 import {compile} from "handlebars";
 import {decode as atob} from "base-64";
 import deepmerge from "deepmerge";
+import fs from "fs";
 
 import App from "./app/App";
+
+const getBaseUrl = (req, scheme) => `${scheme}://${req.get("host")}`;
 
 const app = ({
   scheme,
@@ -24,7 +27,7 @@ const app = ({
     () => {
       const {query} = req;
       const {deepLinkUri, public: cert} = query;
-      const baseUrl = `${scheme}://${req.get("host")}${serviceWorkerPath}`;
+      const baseUrl = `${getBaseUrl(req, scheme)}${serviceWorkerPath}`;
       const config = Object.freeze({
         baseUrl,
         enableLogging,
@@ -78,15 +81,24 @@ const defaultOptions = {
   scheme: "http",
 };
 
+const replaceRedirect = ({ scheme }, path) => {
+  const orig = fs.readFileSync(path, "utf8");
+  return (req, res, next) => {
+    const baseUrl = `${getBaseUrl(req, scheme)}`;
+    const data = orig.replace("http://localhost:3000", baseUrl);
+    return res.status(OK).send(data);
+  };
+};
+
 export const torus = (options = defaultOptions) => {
   const opts = deepmerge(defaultOptions, options);
   const {verifierMap, torusPath, serviceWorkerPath} = opts;
   return express()
-   .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html'))
-   .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js'))
-   .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
-   .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
-   .use(`${torusPath}`, app(opts));
+    .use(`${serviceWorkerPath}/redirect`, replaceRedirect(opts, `${appRootPath}/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/redirect.html`))
+    .use(`${serviceWorkerPath}/sw.js`, replaceRedirect(opts, `${appRootPath}/node_modules/@toruslabs/torus-direct-web-sdk/serviceworker/sw.js`))
+    .get(`${torusPath}/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/app.js'))
+    .get(`${torusPath}/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/node_modules/express-torus/dist/vendor.js'))
+    .use(`${torusPath}`, app(opts));
 };
 
 

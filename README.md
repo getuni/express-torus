@@ -10,7 +10,7 @@ This project was created as part of the [**Gitcoin**](https://gitcoin.co/) [**KE
 To install [`express-torus`](https://github.com/cawfree/express-torus), add the following dependencies:
 
 ```bash
-yarn add @toruslabs/torus-direct-web-sdk prop-types react-dom react express-torus type-check
+yarn add @toruslabs/torus-direct-web-sdk prop-types react-dom react express-torus
 ```
 
 ### ⚙️ Using a Custom Verifier
@@ -26,7 +26,7 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
       - Remember, be careful to check whether you should be defining a specific region for your domain!
   - Next, in your `loginToConnectionMap` you'll need to assign verifiers to your custom `domain` on Auth0.
   - Under your Tor.us **Application Settings**, you must register the URL of your `express` app as one of the allowed callback URLs.
-    - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`, or wherever you have defined your custom `/serviceworker`.
+    - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`, or wherever you have defined your custom `/serviceworker` during your call to `torus()`.
   - Finally, you'll need to register your authentication callback URLs.
     - This takes the form `https://${YOUR_AUTH0_DOMAIN}.auth0.com/login/callback`.
       - If you're using a region-specific callback, i.e. `us`, this would be `https://${YOUR_AUTH0_DOMAIN}.us.auth0.com/login/callback`.
@@ -52,9 +52,6 @@ import fs from "fs";
 const TWITTER = "twitter";
 const AUTH_DOMAIN = "https://${YOUR_AUTH0_DOMAIN}.auth0.com";
 
-/* define which route the tor.us' serviceworker is located */
-const serviceWorkerPath = "/serviceworker";
-
 /* define your verifierMap */
 const verifierMap = {
   [TWITTER]: {
@@ -74,12 +71,8 @@ express()
   // XXX: Define a custom UI for your login page. (See example for a demonstration!)
   .get(`/torus/root/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/torus-app.js'))
   .get(`/torus/root/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/torus-vendor.js'))
-  // XXX: Override service worker to support our domain. (You'll need to clone equivalent files in the project and manually correct the redirect URLs).
-  .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/redirect.html'))
-  .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/sw.js'))
   .use(torus(
     {
-      serviceWorkerPath,
       scheme: "https", // Define whether your express server sits behind https protocol.
       enableLogging: true,
       proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183", // Details for the test net. (This is the location of tor.us' contract).
