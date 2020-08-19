@@ -25,7 +25,6 @@ const App = ({postMessageStream, isServerSide, config}) => {
   } = config;
 
   const [success, setSuccess] = useState(false);
-  const [didInit, setDidInit] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
@@ -49,7 +48,6 @@ const App = ({postMessageStream, isServerSide, config}) => {
       try {
         console.warn("about to init...");
         const result = await sdk.init({skipSw: false});
-        setDidInit(true);
         console.log("did init successfully");
       }
       catch (e) {
@@ -58,39 +56,40 @@ const App = ({postMessageStream, isServerSide, config}) => {
         setError(e);
       }
     })() && undefined,
-    [sdk, setDidInit, isServerSide, setError],
+    [sdk, isServerSide, setError],
   );
 
   const shouldTriggerLogin = useCallback(
     (selectedVerifier) => {
       const verify = verifierMap[selectedVerifier];
       const jwtParams = loginToConnectionMap[selectedVerifier];
-      if (didInit) {
-        const {typeOfLogin, clientId, verifier} = verify;
-        return Promise
-          .resolve()
-          .then(() => setLoading(true))
-          .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
-          .then(data => shouldEncryptSensitiveData(data, jsrsasign.KEYUTIL.getKey(cert)))
-          .then(
-            (encryptedData) => {
-              // XXX: Should we redirect to a deep link uri?
-              if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
-                // TODO: use a more robust method for url query parameters
-                const q = deepLinkUri.includes("?") ? "&" : "?";
-                return Promise.resolve()
-                  .then(() => setSuccess(true))
-                  .then(() => window.location.href = `${deepLinkUri}${q}torus=${encodeURIComponent(JSON.stringify(encryptedData))}`);
-              }
-              return undefined;
-            },
-          )
-          .catch(setError)
-          .then(() => setLoading(false)) && undefined;
-      }
-      return Promise.reject(new Error(`Not yet initialized!`)) && undefined;
+      const {typeOfLogin, clientId, verifier} = verify;
+      return Promise
+        .resolve()
+        .then(() => setLoading(true))
+        .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
+        .then(data => shouldEncryptSensitiveData(data, jsrsasign.KEYUTIL.getKey(cert)))
+        .then(
+          (encryptedData) => {
+            // XXX: Should we redirect to a deep link uri?
+            if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
+              // TODO: use a more robust method for url query parameters
+              const q = deepLinkUri.includes("?") ? "&" : "?";
+              return Promise.resolve()
+                .then(() => setSuccess(true))
+                .then(() => window.location.href = `${deepLinkUri}${q}torus=${encodeURIComponent(JSON.stringify(encryptedData))}`);
+            }
+            return undefined;
+          },
+        )
+        .catch((e) => {
+          console.warn('got an error with sdk');
+          console.error(e);
+          setError(e);
+        })
+        .then(() => setLoading(false)) && undefined;
     },
-    [didInit, sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
+    [sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
   );
 
   useEffect(
