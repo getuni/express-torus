@@ -41,9 +41,9 @@ express()
 
 For more information on defining authentication providers, please check out [**torusresearch**](https://github.com/torusresearch)'s [`torus-direct-web-sdk`](https://github.com/torusresearch/torus-direct-web-sdk) [**Example**](https://github.com/torusresearch/torus-direct-web-sdk/blob/26ad6a9d3ff10c935a202b93539c94de3978a5b4/examples/vue-app/src/App.vue#L42).
 
-### Using a Custom Verifier
+### ⚙️ Using a Custom Verifier
 
-The [**Tor.us**](https://tor.us) example above shows how we can use a pre-configured verifier defined by the tor.us team, for us with experimenting with example applications that run on your [**localhost:3000***](http://localhost:3000); however to use on a custom domain, you perform the following additional steps:
+The [**Tor.us**](https://tor.us) example above shows how we can use a pre-configured verifier defined by the tor.us team, for us with experimenting with example applications that run on your [**localhost:3000**](http://localhost:3000); however, to use your own login providers and domain, you perform the following additional steps:
 
   - Register an account with [**Auth0**](https://auth0.com/) and [**Create an Application**](https://auth0.com/docs/get-started) you wish for users to authenticate under.
   - Next, provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json`, alongside with your **Auth0 Application Identifier** (and _not_ your Global Identifier).
@@ -64,6 +64,61 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
 
 > **Note:** You are **not** required to use an _Auth0 Custom Domain_ to use Tor.us login on your own deployed server. 
 > Normally, this is just done if you'd like a _pretty_ URL!
+
+### ✍️ Custom Authentication Example
+
+Below shows a complete custom authentication solution. This outlines important conventions regarding **custom frontend configuration**, which enables you to design a totally bespoke interface around tor.us login, and **custom verifier definition** which enables your user to authenticate using a non-localhost instance.
+
+```javascript
+import express from "express";
+
+import {torus} from "express-torus";
+import appRootPath from "app-root-path";
+import {OK} from "http-status-codes";
+import fs from "fs";
+
+/* define a twitter login */
+const TWITTER = "twitter";
+const AUTH_DOMAIN = "https://${YOUR_AUTH0_DOMAIN}.auth0.com";
+
+/* define which route the tor.us' serviceworker is located */
+const serviceWorkerPath = "/serviceworker";
+
+/* define your verifierMap */
+const verifierMap = {
+  [TWITTER]: {
+    name: "Twitter",
+    typeOfLogin: "twitter",
+    clientId: "XXXXXX", // This is your auth0 application identifier.
+    verifier: "XXXXXX", // This verifier name is provided to your by tor.us.
+  },
+};
+
+/* define your loginToConnectionMap */
+const loginToConnectionMap = {
+  [TWITTER]: { domain: AUTH_DOMAIN },
+};
+
+express()
+  // XXX: Define a custom UI for your login page. (See example for a demonstration!)
+  .get(`/torus/root/app.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/torus-app.js'))
+  .get(`/torus/root/vendor.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/torus-vendor.js'))
+  // XXX: Override service worker to support our domain. (You'll need to clone equivalent files in the project and manually correct the redirect URLs).
+  .use(`${serviceWorkerPath}/redirect`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/redirect.html'))
+  .use(`${serviceWorkerPath}/sw.js`, (_, res) => res.status(OK).sendFile(appRootPath + '/public/sw.js'))
+  .use(torus(
+    {
+      serviceWorkerPath,
+      scheme: "https", // Define whether your express server sits behind https protocol.
+      enableLogging: true,
+      proxyContractAddress: "0x4023d2a0D330bF11426B12C6144Cfb96B7fa6183", // Details for the test net. (This is the location of tor.us' contract).
+      network: "ropsten", // The network to use.
+      verifierMap,
+      loginToConnectionMap,
+    },
+  ))
+  .listen(process.env.PORT || 8080, () => null);
+  ```
     
 ## ✌️ License
 [**MIT**](./LICENSE)
