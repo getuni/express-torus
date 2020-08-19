@@ -46,17 +46,20 @@ For more information on defining authentication providers, please check out [**t
 The [**Tor.us**](https://tor.us) example above shows how we can use a pre-configured verifier defined by the tor.us team, for us with experimenting with example applications that run on your [**localhost:3000***](http://localhost:3000); however to use on a custom domain, you perform the following additional steps:
 
   - Register an account with [**Auth0**](https://auth0.com/)
-  - Provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json` along with your **Auth0 Application Identifier** (**not** your Global Identifier), which you can find in your applications (**Note:** Your domain might reset under a specific region, i.e. `https://${YOUR_AUTH_DOMAIN}.us.auth0.com`).
+  - Provide Tor.us with your `${YOUR_AUTH0_DOMAIN}.auth0.com/.well-known/jwks.json`, alongside with your **Auth0 Application Identifier** (and _not_ your Global Identifier).
     - You can get in touch with the talented team of tor.us developers via their [**Telegram**](https://t.me/TorusLabs).
+    - **Note:** Your domain might reset under a specific region, i.e. `https://${YOUR_AUTH_DOMAIN}.us.auth0.com`.
     - You can view the identifiers of each application at . You'll need to provide this to your `verifierMap`.
-    - Tor.us will provide you with a verifier URL, which can be passed to your `verifierMap`, alongside the `clientId` which is set to the [**Application Identifer**]() that you provided to tor.us.
+    - Tor.us will provide you with an application-specific verifier URL, which you must pass to your `verifierMap`. In addition, you need to provide the `clientId` which is the **Application Identifer** that you provided to tor.us.
     - You are **not** required to use a Auth0 Custom Domain for this solution to work. (Normally, this is just done to have a _pretty_ URL.)
   - Define your Auth0 `AUTH_DOMAIN` (i.e. `https://${YOUR_AUTH0_DOMAIN}.auth0.com`) in the `loginToConnectionMap`, i.e. `twitter: { domain: "${YOUR_AUTH0_DOMAIN}"}`.
   - In your Tor.us **Application Settings**, you must register your URL as one of the allowed callback URLs.
    - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`.
   - Finally, you'll need to register your authentication callback URLs.
-    - Here's an example using [**Twitter**](https://auth0.com/docs/connections/social/twitter).
-    - Double-check your [**connection**](https://auth0.com/docs/connections/social/twitter) by performing a Social Login test under Auth0.
-
+    - This takes the form `https://${YOUR_AUTH0_DOMAIN}.auth0.com/login/callback`.
+    - Or if you're using a region-specific callback, `https://${YOUR_AUTH0_DOMAIN}.us.auth0.com/login/callback`.
+    - Next, you'll need to [connect your Auth0 application](https://auth0.com/docs/connections) to the login provider.
+    - You can verify your connection between Auth0 and the Authentication Provider by performing a connection test. This must complete successfully before you can attempt to authenticate using Tor.us on your custom frontend.
+    
 ## ✌️ License
 [**MIT**](./LICENSE)
