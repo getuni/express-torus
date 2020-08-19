@@ -52,12 +52,14 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
     - You can view the identifiers of each application at . You'll need to provide this to your `verifierMap`.
     - Tor.us will provide you with an application-specific verifier URL, which you must pass to your `verifierMap`. In addition, you need to provide the `clientId` which is the **Application Identifer** that you provided to tor.us.
     - You are **not** required to use a Auth0 Custom Domain for this solution to work. (Normally, this is just done to have a _pretty_ URL.)
-  - Define your Auth0 `AUTH_DOMAIN` (i.e. `https://${YOUR_AUTH0_DOMAIN}.auth0.com`) in the `loginToConnectionMap`, i.e. `twitter: { domain: "${YOUR_AUTH0_DOMAIN}"}`.
-  - In your Tor.us **Application Settings**, you must register your URL as one of the allowed callback URLs.
-   - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`.
+  - Next, in your `loginToConnectionMap` you'll need to assign verifiers to your custom `domain` on Auth0.
+    - i.e. `const verifierMap = { twitter: { domain: "${YOUR_AUTH0_DOMAIN}"} }`.
+      - Remember, be careful to check whether you should be defining a specific region for your domain!
+  - Under your Tor.us **Application Settings**, you must register the URL of your `express` app as one of the allowed callback URLs.
+   - This is usually something like `https://${YOUR_PAGE_LOCATION}/serviceworker/redirect`, or wherever you have defined your custom `/serviceworker`.
   - Finally, you'll need to register your authentication callback URLs.
     - This takes the form `https://${YOUR_AUTH0_DOMAIN}.auth0.com/login/callback`.
-    - Or if you're using a region-specific callback, `https://${YOUR_AUTH0_DOMAIN}.us.auth0.com/login/callback`.
+      - If you're using a region-specific callback, i.e. `us`, this would be `https://${YOUR_AUTH0_DOMAIN}.us.auth0.com/login/callback`.
     - Next, you'll need to [connect your Auth0 application](https://auth0.com/docs/connections) to the login provider.
     - You can verify your connection between Auth0 and the Authentication Provider by performing a connection test. This must complete successfully before you can attempt to authenticate using Tor.us on your custom frontend.
     
