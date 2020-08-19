@@ -30,7 +30,7 @@ The [**Tor.us**](https://tor.us) example above shows how we can use a pre-config
   - Finally, you'll need to register your authentication callback URLs.
     - This takes the form `https://${YOUR_AUTH0_DOMAIN}.auth0.com/login/callback`.
       - If you're using a region-specific callback, i.e. `us`, this would be `https://${YOUR_AUTH0_DOMAIN}.us.auth0.com/login/callback`.
-    - Next, you'll need to [connect your Auth0 application](https://auth0.com/docs/connections) to the login provider.
+    - Next, you'll need to [**connect your Auth0 application**](https://auth0.com/docs/connections) to the login provider.
     - You can verify your connection between Auth0 and the Authentication Provider by performing a connection test. This must complete successfully before you can attempt to authenticate using Tor.us on your custom frontend.
 
 > **Note:** You are **not** required to use an _Auth0 Custom Domain_ to use Tor.us login on your own deployed server. 
