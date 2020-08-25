@@ -61,12 +61,19 @@ const App = ({postMessageStream, isServerSide, config}) => {
         .resolve()
         .then(() => setLoading(true))
         .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
+        .then(
+          (data) => {
+            if (enableLogging) {
+              console.log(data);
+            }
+            return data;
+          },
+        )
         .then(data => shouldEncryptSensitiveData(data, jsrsasign.KEYUTIL.getKey(cert)))
         .then(
           (encryptedData) => {
             // XXX: Should we redirect to a deep link uri?
             if (typeCheck("String", deepLinkUri) && deepLinkUri.length > 0) {
-              // TODO: use a more robust method for url query parameters
               const q = deepLinkUri.includes("?") ? "&" : "?";
               return Promise.resolve()
                 .then(() => setSuccess(true))
@@ -81,7 +88,7 @@ const App = ({postMessageStream, isServerSide, config}) => {
         })
         .then(() => setLoading(false)) && undefined;
     },
-    [sdk, verifierMap, loginToConnectionMap, setError, setSuccess],
+    [sdk, verifierMap, loginToConnectionMap, setError, setSuccess, enableLogging],
   );
 
   useEffect(

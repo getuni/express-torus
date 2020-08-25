@@ -35,7 +35,7 @@ const app = ({
         network,
         loginToConnectionMap,
         verifierMap,
-        deepLinkUri: atob(deepLinkUri),
+        deepLinkUri: deepLinkUri ? atob(deepLinkUri) : null,
         cert: atob(cert),
       });
       const container = renderToString(
