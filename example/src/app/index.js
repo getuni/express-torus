@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {render} from "react-dom";
 import PostMessageStream from "post-message-stream";
 
 const App = ({postMessageStream}) => {
+  const [loading, setLoading] = useState(false);
+  useEffect(
+    () => {
+      postMessageStream.on(
+        "data",
+        ({ type, ...extras }) => {
+          if (type === "loading-state") {
+            const { loading } = extras;
+            setLoading(loading);
+          }
+        },
+      );
+    },
+    [postMessageStream, setLoading],
+  );
   return (
     <>
       <button
@@ -13,6 +28,9 @@ const App = ({postMessageStream}) => {
         onClick={() => postMessageStream.write({ type:"login", provider: "twitter" })}
         children="Login with Twitter"
       />
+      {(!!loading) && (
+        <span children="Loading..." />
+      )}
     </>
   );
 };

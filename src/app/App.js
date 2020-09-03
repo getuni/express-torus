@@ -100,6 +100,9 @@ const App = ({postMessageStream, isServerSide, config}) => {
             if (type === "login") {
               const{provider} = extras;
               return shouldTriggerLogin(provider);
+            } else if (type === "loading-state") {
+              /* ignore */
+              return undefined;
             }
             return console.warn(`Encountered unexpected type, "${type}". This will be ignored.`);
           },
@@ -107,6 +110,16 @@ const App = ({postMessageStream, isServerSide, config}) => {
       }
     },
     [isServerSide, postMessageStream, shouldTriggerLogin],
+  );
+
+  useEffect(
+    () => {
+      if (!isServerSide) {
+        /* update the loading state */
+        postMessageStream.write({ type: "loading-state", loading })
+      }
+    },
+    [isServerSide, postMessageStream, loading],
   );
 
   return null;
