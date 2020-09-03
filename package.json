@@ -1,6 +1,6 @@
 {
   "name": "express-torus",
-  "version": "0.0.3-alpha.7",
+  "version": "0.0.4-alpha.0",
   "description": "🔐 Tor.us middleware for Express.",
   "main": "dist",
   "repository": "https://github.com/cawfree/express-torus",
