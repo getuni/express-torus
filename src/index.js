@@ -86,7 +86,28 @@ const replaceRedirect = ({ scheme }, path) => {
   const orig = fs.readFileSync(path, "utf8");
   return (req, res, next) => {
     const baseUrl = `${getBaseUrl(req, scheme)}`;
-    const data = orig.replace("http://localhost:3000", baseUrl);
+    const override = `
+if (window.ReactNativeWebView) {
+  window.ReactNativeWebView.postMessage(
+    JSON.stringify(
+      {
+        type: "torus-verifier-result",
+        result: {
+          instanceParams: instanceParams,
+          hashParams: hashParams,
+          queryParams: queryParams,
+        },
+      },
+    ),
+  );
+}
+`.trim();
+
+    const data = orig
+      .replace("http://localhost:3000", baseUrl)
+      .replace("// communicate to window.opener", override)
+      .replace("// communicate via broadcast channel", override);
+
     return res.status(OK).send(data);
   };
 };
