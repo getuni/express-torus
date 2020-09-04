@@ -20,6 +20,7 @@ const App = ({postMessageStream}) => {
   );
   return (
     <>
+      <div style={{ height: 100 }} />
       <button
         onClick={() => postMessageStream.write({ type:"login", provider: "google" })}
         children="Login with Google"
