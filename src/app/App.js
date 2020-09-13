@@ -12,6 +12,7 @@ const shouldEncryptSensitiveData = (data, key) => {
   };
 };
 
+// TODO: add startInLoadingState :)
 const App = ({postMessageStream, isServerSide, config}) => {
   const {
     baseUrl,
@@ -67,6 +68,58 @@ const App = ({postMessageStream, isServerSide, config}) => {
     [sdk, isServerSide, setError],
   );
 
+  const shouldTriggerVerify = useCallback(
+    async ({ typeOfLogin, verifier, clientId, jwtParams, queryParams, instanceParams, hashParams }) => {
+      setLoading(true);
+      const hash = Object.entries(hashParams)
+        .map(
+          ([k, v]) => {
+            if (k === "state") {
+              // XXX: Yuck.
+              return [k, encodeURIComponent((encodeURIComponent(btoa(JSON.stringify(v)))))];
+            }
+            return [k, v];
+          },
+        )
+        .map(([k, v]) => `${k}=${v}`)
+        .join("&");
+
+      const { instanceId: preopenInstanceId } = instanceParams;
+
+      const queryParameters = { ...queryParams, preopenInstanceId };
+
+      try {
+        const data = await sdk.triggerLogin(
+          {
+            typeOfLogin,
+            verifier,
+            clientId,
+            jwtParams,
+            /* skip open; hit tor.us directly */
+            hash,
+            queryParameters,
+          },
+        );
+
+        const encryptedData = await shouldEncryptSensitiveData(data, jsrsasign.KEYUTIL.getKey(cert));
+
+        setSuccess(true);
+
+        return shouldPostMessage({ type: "torus-auth", data: encryptedData });
+      } catch (e) {
+        setError(new Error(e));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [sdk, shouldPostMessage, setSuccess, setLoading, setError, cert],
+  );
+
+  if (!isServerSide) {
+    /* TODO: This is a hack. Find a smarter way to do this.  */
+    window.__REACT_TORUS_TRIGGER_VERIFY__ = shouldTriggerVerify;
+  }
+
   const shouldTriggerLogin = useCallback(
     (selectedVerifier) => {
       const verify = verifierMap[selectedVerifier];
@@ -75,7 +128,12 @@ const App = ({postMessageStream, isServerSide, config}) => {
       return Promise
         .resolve()
         .then(() => setLoading(true))
-        .then(() => sdk.triggerLogin({typeOfLogin, verifier, clientId, jwtParams}))
+        .then(() => {
+          const trigger = {typeOfLogin, verifier, clientId, jwtParams};
+          // XXX: Sync the WebView to acknowledge the client type.
+          shouldPostMessage({ type: "torus-trigger-auth", trigger });
+          return sdk.triggerLogin(trigger);
+        })
         .then(
           (data) => {
             if (enableLogging) {
@@ -107,7 +165,7 @@ const App = ({postMessageStream, isServerSide, config}) => {
         })
         .then(() => setLoading(false)) && undefined;
     },
-    [sdk, verifierMap, loginToConnectionMap, setError, setSuccess, enableLogging, shouldPostMessage],
+    [sdk, verifierMap, loginToConnectionMap, setError, setSuccess, enableLogging, shouldPostMessage, cert],
   );
 
   useEffect(
@@ -128,7 +186,7 @@ const App = ({postMessageStream, isServerSide, config}) => {
         ) && undefined
       }
     },
-    [isServerSide, postMessageStream, shouldTriggerLogin],
+    [sdk, isServerSide, postMessageStream, shouldTriggerLogin, shouldTriggerVerify],
   );
 
   useEffect(
