@@ -10,7 +10,7 @@ This project was created as part of the [**Gitcoin**](https://gitcoin.co/) [**KE
 To install [`express-torus`](https://github.com/cawfree/express-torus), add the following dependencies:
 
 ```bash
-yarn add @toruslabs/torus-direct-web-sdk prop-types react-dom react express-torus
+yarn add prop-types react-dom react express-torus
 ```
 
 ### ⚙️ Using a Custom Verifier
