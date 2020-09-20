@@ -53,6 +53,11 @@ const App = ({postMessageStream, isServerSide, config}) => {
     [],
   );
 
+  const shouldTriggerCancel = useCallback(
+    () => shouldPostMessage({type: "torus-auth-cancel"}) && undefined,
+    [shouldPostMessage],
+  );
+
   useEffect(
     () => (async () => {
 
@@ -180,13 +185,15 @@ const App = ({postMessageStream, isServerSide, config}) => {
             } else if (type === "loading-state") {
               /* ignore */
               return undefined;
+            } else if (type === "cancel") {
+              return shouldTriggerCancel();
             }
             return console.warn(`Encountered unexpected type, "${type}". This will be ignored.`);
           },
         ) && undefined
       }
     },
-    [sdk, isServerSide, postMessageStream, shouldTriggerLogin, shouldTriggerVerify],
+    [sdk, isServerSide, postMessageStream, shouldTriggerLogin, shouldTriggerVerify, shouldTriggerCancel],
   );
 
   useEffect(

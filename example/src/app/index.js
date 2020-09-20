@@ -22,12 +22,16 @@ const App = ({postMessageStream}) => {
     <>
       <div style={{ height: 100 }} />
       <button
-        onClick={() => postMessageStream.write({ type:"login", provider: "google" })}
+        onClick={() => postMessageStream.write({type:"login", provider: "google"})}
         children="Login with Google"
       />
       <button
-        onClick={() => postMessageStream.write({ type:"login", provider: "twitter" })}
+        onClick={() => postMessageStream.write({type:"login", provider: "twitter"})}
         children="Login with Twitter"
+      />
+      <button
+        onClick={() => postMessageStream.write({type:"cancel"})}
+        children="Cancel"
       />
       {(!!loading) && (
         <span children="Loading..." />
