@@ -5,7 +5,7 @@
     "start": "yarn webpack ; babel-node src"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-torus": "../",
     "http-status-codes": "^1.4.0",
     "post-message-stream": "^3.0.0",
